@@ -1,0 +1,28 @@
+import requests
+import json
+ 
+def download_json_series(initial_url):
+    current_url = initial_url
+    page_number = 0
+   
+   
+    while current_url:
+        response = requests.get(current_url)
+        response.raise_for_status()  # Check for HTTP request errors
+       
+        data = response.json()
+       
+        # Save the current page's JSON data to a file
+        filename = f'output_page_{page_number}.json'
+        with open(filename, 'w') as file:
+            json.dump(data, file, indent=4)
+        print(f"Downloaded page {page_number} to {filename}")
+       
+        # Check for the 'next' URL in the JSON data
+        current_url = data.get('paging', {}).get('next')
+        page_number += 1
+ 
+# Example usage
+initial_url = 'https://graph.facebook.com/v19.0/me?fields=id,name,features,fan_count,description,genre,is_chain,is_eligible_for_disable_connect_ig_btn_for_non_page_admin_am_web,is_owned&access_token=EAALBSAUirFQBO2PfT3O2ZCYXse0Ep9CxCam3AeCeA379gWD7MBRWMSoqwblZC0kZCP0XrH4MlwLOLhweGvmpMclREuuNNtlZBRNnutBO8v4M7eHwyo8CN4TecwpR2vFvH1yw5DxqxnXsXW9xHNAhleLgh3eoEr21IIjb6SrCfj17poIZBcqEDRQsZAh8Ru6nJUa655ZArZCoWXdLBBOsltsZD'
+download_json_series(initial_url)
+ 
